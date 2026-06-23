@@ -1,0 +1,17 @@
+{
+  "end_of_word": "e",
+  "next_word": "w",
+  "prev_word": "b",
+  "change_word": "ciw",
+  "change_to_end": "c$",
+  "delete_line": "dd",
+  "open_below": "o",
+  "open_above": "O",
+  "yank_line": "yy",
+  "paste": "p",
+  "change_in_quotes": "ci\"",
+  "change_in_parens": "ci(",
+  "search": "/",
+  "record_macro": "q",
+  "play_macro": "@"
+}
