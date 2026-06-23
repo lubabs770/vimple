@@ -1,0 +1,9 @@
+Lesson two: word motions ( {next_word} {prev_word} {end_of_word} ).
+
+In src/todo.ts the function listOpen has a typo in its parameter name:
+"taks" should be "tasks". Open the file, navigate to that word using word
+motions, and fix it so the line reads exactly:
+    export function listOpen(tasks: Task[]): Task[] {
+
+Tip: put the cursor on  taks  and use {change_in_quotes}'s cousin —
+{change_word} (change inner word) — then type  tasks  and Esc. Save with :w

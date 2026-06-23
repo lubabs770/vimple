@@ -7,7 +7,7 @@ export type Task = { id: number; title: string; done: boolean };
 export function addTask(tasks: Task[], title: string): Task[] {
   throw new Error("not implemented");
 }
-export function listOpen(tasks: Task[]): Task[] {
+export function listOpen(taks: Task[]): Task[] {
   throw new Error("not implemented");
 }
 export function completeTask(tasks: Task[], id: number): Task[] {
