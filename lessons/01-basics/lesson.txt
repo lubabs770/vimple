@@ -1,0 +1,14 @@
+Welcome. This is lesson one: opening files and saving.
+
+Goal: open src/todo.ts in your editor and change the APP_NAME value from
+"CHANGEME" to exactly:
+    "vimple-todo"
+
+How (Vim):
+  - Run `./vimple edit` to open your Vim at the repo root.
+  - Open the file with  :e src/todo.ts
+  - Move onto the word CHANGEME and replace it (try {change_in_quotes} on the
+    quoted text), type  vimple-todo , then press Esc.
+  - Save and quit:  :wq
+
+When done, run  ./vimple check

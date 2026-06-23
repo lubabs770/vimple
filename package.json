@@ -5,7 +5,8 @@
   "private": true,
   "bin": { "vimple": "./vimple" },
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run tests/",
+    "test:lessons": "vitest run lessons/",
     "test:watch": "vitest"
   },
   "devDependencies": {
