@@ -1,0 +1,10 @@
+Lesson six: counts ( 3dd, 2dw ). Implement removeTask.
+
+Make the whole function read exactly:
+
+    export function removeTask(tasks: Task[], id: number): Task[] {
+      return tasks.filter((t) => t.id !== id);
+    }
+
+How: if you need to clear several stub lines at once, use a count with
+{delete_line} (e.g. 2 then dd). Save with :w

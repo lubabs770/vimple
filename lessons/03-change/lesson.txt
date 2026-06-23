@@ -1,0 +1,10 @@
+Lesson three: the change operator builds real behavior.
+
+Implement addTask. Replace its body so the whole function reads exactly:
+
+    export function addTask(tasks: Task[], title: string): Task[] {
+      return [...tasks, { id: tasks.length + 1, title, done: false }];
+    }
+
+How: open src/todo.ts, delete the stub body line (try {delete_line}),
+{open_below} a new line, and type the return statement. Save with :w
