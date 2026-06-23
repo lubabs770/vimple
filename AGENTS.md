@@ -22,24 +22,21 @@ lessons. This file is the contract for extending it.
    Either import from `src/*` and assert behavior, or read the source file and
    assert on its text.
 5. Add the action to `keymap.json` if you use a new `{placeholder}`.
-6. Add the solved source to `scripts/solve.ts` so `tests/completability.test.ts`
+6. Update the solved source in `scripts/solve.ts` so `tests/completability.test.ts`
    stays green.
 
 ## Commands
 
 `./vimple` (show) · `edit` · `check` · `status` · `reset [n]`.
 
-## Tests
+## Test
 
-The lesson checks under `lessons/**/check.test.ts` are **graders**: they are red
-until a learner solves the corresponding lesson, so they are NOT part of the default
-test run.
-
-- `npm test` → runs `tests/**` only: the runner-logic suites PLUS
-  `tests/completability.test.ts`, the keystone that applies every lesson's canonical
-  solution (from `scripts/solve.ts`) in a temp copy and asserts all lesson checks pass.
-  This stays green on the shipped (unsolved) repo, so CI uses it.
-- `npm run test:lessons` → runs the raw lesson checks under `lessons/**`; expect these
-  red until solved.
-- `vitest.config.ts` keeps `lessons/**/check.test.ts` in its `include` globs because the
-  runner's `check.ts` shells out to vitest for a single lesson's grader — don't remove it.
+- `npm test` — runner-logic tests plus the completability keystone (everything under
+  `tests/`). The keystone applies the canonical solutions from `scripts/solve.ts` and
+  runs every lesson check against them, so a lesson whose stated target can't satisfy
+  its grader fails here. Green on a clean checkout.
+- `npm run test:lessons` — runs the lesson graders (`lessons/**/check.test.ts`) directly
+  against the working tree. On an unsolved repo these are red by design and go green as a
+  learner completes each lesson; this is also what `./vimple check` runs for the current
+  lesson. (The runner's `runCheck` relies on `lessons/**/check.test.ts` staying in
+  `vitest.config.ts`'s `include` globs — do not remove it.)
