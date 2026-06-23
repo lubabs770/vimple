@@ -1,0 +1,11 @@
+Lesson four: text objects. Implement listOpen so it returns only open tasks.
+
+Make the whole function read exactly:
+
+    export function listOpen(tasks: Task[]): Task[] {
+      return tasks.filter((t) => !t.done);
+    }
+
+How: replace the stub body. Practice changing inside the parens with
+{change_in_parens} on the filter call, and inside quotes with
+{change_in_quotes} elsewhere. Save with :w
