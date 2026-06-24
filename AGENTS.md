@@ -32,9 +32,11 @@ Each task site in `src/` is marked with a single anchor line, e.g. `// @vimple:a
 
 - `./vimple` **expands** the current task's anchor: it inserts the instruction
   block (resolved against `keymap.json`) directly above the anchor, wrapped in
-  `// @vimple:begin NN` … `// @vimple:end NN`. Idempotent.
-- `./vimple check` runs the grader; on green it **collapses** the block and
-  rewrites the anchor to `// @vimple:done NN`, advances, and expands the next.
+  `// @vimple:begin NN` … `// @vimple:end NN`. Idempotent. Then it opens Vim, and
+  **when you quit Vim it runs the grader automatically** — no second command.
+- On green the runner **collapses** the block and rewrites the anchor to
+  `// @vimple:done NN`, advances, and expands the next task in the same session.
+  (`./vimple check` does the same grade non-interactively, e.g. for CI.)
 - `./vimple reset [n]` **re-anchors** tasks `≥ n` (drops blocks, `done` → `anchor`)
   so they can be done again. It does not revert your code edits.
 - Tests never see markers: read source through `stripVimple()` (see

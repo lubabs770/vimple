@@ -11,19 +11,25 @@ export function progressBar(done: number, total: number): string {
   return `[${green("#".repeat(filled))}${"-".repeat(width - filled)}] ${done}/${total}`;
 }
 
-/** Banner shown when starting/resuming a task. */
+/** Banner shown right before the editor opens. Deliberately carries NO task
+ *  instructions — those live only in the buffer's comment block. This is just a
+ *  "where am I / what's loading" marker. */
 export function startBanner(task: LoadedTask, index: number, total: number): string {
   const head = bold(`vimple · task ${task.id}/${total} · ${task.skill}`);
   return [
     "",
     `${head}   ${progressBar(index, total)}`,
-    bold(task.title),
+    `${dim("→ opening Vim at")} ${bold(task.file)}${dim(" — your instructions are in the buffer.")}`,
+    `${dim("  save & quit when you think it's done; vimple grades it automatically.")}`,
     "",
-    `${dim("→")} open the project in Vim and navigate to ${bold(task.file)}`,
-    `${dim("  ")} ${task.hint}`,
-    `${dim("  the full instructions are waiting in the buffer, as a comment block.")}`,
+  ].join("\n");
+}
+
+/** Shown after a task passes and we roll into the next one in the same session. */
+export function advanceBanner(passedId: number, done: number, total: number): string {
+  return [
     "",
-    dim("when you've made the edit, save and run:  ./vimple check"),
+    `${green("✓")} ${bold(`task ${passedId} complete`)}   ${progressBar(done, total)}`,
     "",
   ].join("\n");
 }
