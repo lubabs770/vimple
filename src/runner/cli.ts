@@ -31,6 +31,14 @@ function expandCurrent(root: string, task: LoadedTask): void {
   if (next !== src) writeFileSync(path, next, "utf8");
 }
 
+/** 1-based line of the task's injected instruction block, so the editor can open
+ *  with the cursor already on it. Falls back to 1 if not found. */
+function instructionLine(root: string, task: LoadedTask): number {
+  const src = readFileSync(join(root, task.file), "utf8");
+  const i = src.split("\n").findIndex((r) => /\/\/\s*@vimple:begin\b/.test(r));
+  return i < 0 ? 1 : i + 1;
+}
+
 /** Collapse the current task's instruction block once it's complete. */
 function collapseTask(root: string, task: LoadedTask): void {
   const path = join(root, task.file);
@@ -120,7 +128,8 @@ export async function run(
     const task = tasks[state.taskIndex]!;
     expandCurrent(root, task);
     console.log(startBanner(task, state.taskIndex, total));
-    launch(resolveEditor(env, { mode: state.editorMode, root }), root);
+    const line = instructionLine(root, task);
+    launch(resolveEditor(env, { mode: state.editorMode, root, file: task.file, line }), root);
 
     const { passed, output } = grade(task);
     if (!passed) {

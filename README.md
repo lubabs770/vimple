@@ -20,11 +20,13 @@ npm install
 
 That's the whole loop — **one command does everything:**
 
-- `./vimple` — set up (first run), then open the project in Vim with the current
-  task's instructions injected into the file you'll edit. When you **save & quit
-  Vim, vimple grades it automatically**: green collapses the block and rolls you
-  straight into the next task (same session, no second command); red shows what
-  the grader saw, so you fix it and run `./vimple` again to pick up right here.
+- `./vimple` — set up (first run), then open Vim **directly on the task's file
+  with the cursor on the injected instruction block** (so the instructions are
+  on screen the instant Vim opens — no dashboard, no hunting for the file). When
+  you **save & quit Vim, vimple grades it automatically**: green collapses the
+  block and rolls you straight into the next task (same session, no second
+  command); red shows what the grader saw, so you fix it and run `./vimple`
+  again to pick up right here.
 
 That's it — you never type a second command to advance. The rest are optional:
 
