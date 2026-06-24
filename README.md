@@ -18,15 +18,20 @@ npm install
 ./vimple            # start — or resume. first run asks how you want to edit.
 ```
 
-That's the whole loop:
+That's the whole loop — **one command does everything:**
 
-- `./vimple` — set up (first run), then open the project in Vim and inject the
-  current task's instructions into the file you'll edit. You navigate to it.
-- `./vimple check` — grade your edit. Green advances you and arms the next task;
-  red shows what the grader saw.
+- `./vimple` — set up (first run), then open the project in Vim with the current
+  task's instructions injected into the file you'll edit. When you **save & quit
+  Vim, vimple grades it automatically**: green collapses the block and rolls you
+  straight into the next task (same session, no second command); red shows what
+  the grader saw, so you fix it and run `./vimple` again to pick up right here.
+
+That's it — you never type a second command to advance. The rest are optional:
+
 - `./vimple status` — progress.
 - `./vimple reset [n]` — restart, or jump back to task `n`.
 - `./vimple doctor` — re-check your environment (node, tsc, editor, LSP).
+- `./vimple check` — re-grade the current task without opening Vim (handy for CI).
 
 ## How the instructions work
 
@@ -41,9 +46,9 @@ right where the work happens:
 // @vimple:anchor 04
 ```
 
-You read it, do the edit, save, and run `./vimple check`. On success the block
-disappears and the next task's block appears in its file. The graders ignore
-these markers, so they never get in your way.
+You read it, do the edit, then save & quit Vim. vimple grades it for you; on
+success the block disappears and the next task's block appears in its file. The
+graders ignore these markers, so they never get in your way.
 
 ## First-run setup: your Vim, or batteries included
 
