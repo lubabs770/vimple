@@ -1,15 +1,19 @@
 {
   "name": "vimple",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "private": true,
   "bin": { "vimple": "./vimple" },
   "scripts": {
+    "vimple": "tsx src/runner/cli.ts",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run tests/",
-    "test:lessons": "vitest run lessons/",
-    "test:watch": "vitest"
+    "test:tasks": "vitest run tasks/",
+    "test:watch": "vitest",
+    "solve": "tsx scripts/solve.ts"
   },
   "devDependencies": {
+    "@types/node": "^22.10.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"

@@ -4,10 +4,12 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
+    "noUncheckedIndexedAccess": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "types": ["node"],
     "noEmit": true
   },
-  "include": ["src", "tests", "lessons"]
+  "//": "Type-check the product (src) only. Task checks and runner tests are validated by running them in vitest; including them here would fail the build whenever a task references a symbol you haven't created yet.",
+  "include": ["src"]
 }

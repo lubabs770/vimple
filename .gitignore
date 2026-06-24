@@ -1,3 +1,6 @@
 node_modules/
 .vimple-state
 .superpowers/
+dist/
+*.log
+.DS_Store

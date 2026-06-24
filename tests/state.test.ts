@@ -1,24 +1,23 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { mkdtempSync, rmSync } from "node:fs";
+import { test, expect, beforeEach } from "vitest";
+import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { getCurrentIndex, advance, reset } from "../src/runner/state";
+import { load, save, advance, reset } from "../src/runner/state";
 
 let dir: string;
-beforeEach(() => { dir = mkdtempSync(join(tmpdir(), "vimple-")); });
-afterEach(() => { rmSync(dir, { recursive: true, force: true }); });
+beforeEach(() => {
+  dir = mkdtempSync(join(tmpdir(), "vimple-"));
+});
 
-describe("state", () => {
-  it("defaults to 0 when no state file", () => {
-    expect(getCurrentIndex(dir)).toBe(0);
-  });
-  it("advance increments and persists", () => {
-    expect(advance(dir)).toBe(1);
-    expect(getCurrentIndex(dir)).toBe(1);
-  });
-  it("reset writes a specific index", () => {
-    advance(dir); advance(dir);
-    expect(reset(dir, 0)).toBe(0);
-    expect(getCurrentIndex(dir)).toBe(0);
-  });
+test("load returns defaults when there is no state file", () => {
+  expect(load(dir)).toEqual({ taskIndex: 0, editorMode: null, setupDone: false });
+});
+
+test("advance and reset move the pointer but preserve setup", () => {
+  save(dir, { taskIndex: 0, editorMode: "own", setupDone: true });
+  expect(advance(dir).taskIndex).toBe(1);
+  expect(advance(dir).taskIndex).toBe(2);
+  expect(reset(dir, 0).taskIndex).toBe(0);
+  expect(load(dir).editorMode).toBe("own");
+  expect(load(dir).setupDone).toBe(true);
 });

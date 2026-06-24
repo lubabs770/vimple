@@ -1,17 +1,18 @@
 {
-  "end_of_word": "e",
+  "find_file": ":find (or your fuzzy-finder)",
+  "jump_to_def": "gd",
   "next_word": "w",
   "prev_word": "b",
+  "end_of_word": "e",
   "change_word": "ciw",
-  "change_to_end": "c$",
-  "delete_line": "dd",
-  "open_below": "o",
-  "open_above": "O",
-  "yank_line": "yy",
-  "paste": "p",
   "change_in_quotes": "ci\"",
   "change_in_parens": "ci(",
-  "search": "/",
+  "omni_complete": "<C-x><C-o>",
+  "rename_symbol": "<leader>rn",
+  "search_project": ":grep",
+  "quickfix_do": ":cdo",
+  "delete_line": "dd",
   "record_macro": "q",
-  "play_macro": "@"
+  "play_macro": "@",
+  "save": ":w"
 }
