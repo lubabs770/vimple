@@ -1,42 +1,75 @@
 # Contributor & LLM guide
 
-vimple teaches Vim by having a learner build a tiny TS todo CLI through graded
-lessons. This file is the contract for extending it.
+vimple teaches you to use **Vim as an IDE** by doing real work in a small
+TypeScript web API (a "notes" service). Each task teaches one IDE-grade Vim skill;
+the instructions live **in the buffer**, injected as comment blocks personalized
+to your keymap. This file is the contract for extending it.
 
 ## Layout
 
 - `vimple` — bash launcher → `src/runner/cli.ts` via tsx.
-- `src/runner/*` — runner logic, one responsibility per file (keymap, state,
-  lessons, render, editor, check, cli). Tested in `tests/`.
-- `src/todo.ts`, `src/cli.ts` — the learner-facing project (the thing being built).
-- `lessons/NN-name/` — `lesson.txt` (plain text, templated) + `check.test.ts` (grader).
-- `.vimple-state` — current 0-based lesson index (gitignored).
+- `src/runner/*` — runner logic, one responsibility per file:
+  - `state.ts` — `.vimple-state` (JSON: `taskIndex`, `editorMode`, `setupDone`).
+  - `keymap.ts` — load `keymap.json`; resolve `{action}` tokens.
+  - `markers.ts` — anchor injection: `expand` / `collapse` / `reanchor` /
+    `stripVimple` (all idempotent, pure string transforms).
+  - `tasks.ts` — load `tasks/NN-*/task.ts` metadata.
+  - `editor.ts` — launch the editor (own config or turnkey).
+  - `check.ts` — run a task's grader + `tsc --noEmit`.
+  - `doctor.ts` / `setup.ts` — environment check + first-run wizard.
+  - `cli.ts` — command dispatch.
+- `src/{server,routes,handlers,services,models,lib}/*` — the web API you build up.
+  It ships partially stubbed and **compiles at its start state**.
+- `tasks/NN-name/` — `task.ts` (instruction template + canonical `solutions`) and
+  `check.test.ts` (hidden grader).
+- `config/turnkey/nvim/init.lua` — the opt-in batteries-included IDE config.
+- `tests/` — runner unit tests. `scripts/solve.ts` — the completability solver.
+- `.vimple-state` — progress (gitignored).
 
-## Adding a lesson
+## How instructions get into the buffer (Approach A)
 
-1. Create `lessons/NN-name/` with the next numeric prefix.
-2. `lesson.txt`: **plain text only**, no markdown. Reference keys via `{action}`
-   placeholders (keys defined in `keymap.json`); unknown actions throw at render.
-3. State the **exact** target text — learners never reason about TS.
-4. `check.test.ts`: a Vitest test that passes only when the target edit exists.
-   Either import from `src/*` and assert behavior, or read the source file and
-   assert on its text.
-5. Add the action to `keymap.json` if you use a new `{placeholder}`.
-6. Update the solved source in `scripts/solve.ts` so `tests/completability.test.ts`
-   stays green.
+Each task site in `src/` is marked with a single anchor line, e.g. `// @vimple:anchor 04`.
+
+- `./vimple` **expands** the current task's anchor: it inserts the instruction
+  block (resolved against `keymap.json`) directly above the anchor, wrapped in
+  `// @vimple:begin NN` … `// @vimple:end NN`. Idempotent.
+- `./vimple check` runs the grader; on green it **collapses** the block and
+  rewrites the anchor to `// @vimple:done NN`, advances, and expands the next.
+- `./vimple reset [n]` **re-anchors** tasks `≥ n` (drops blocks, `done` → `anchor`)
+  so they can be done again. It does not revert your code edits.
+- Tests never see markers: read source through `stripVimple()` (see
+  `tasks/10-fix-the-build/check.test.ts`).
+
+## Adding a task
+
+1. Pick the next numeric prefix: `tasks/NN-name/`.
+2. Add a `// @vimple:anchor NN` line at the exact work site in the relevant
+   `src/` file. Keep the start state compiling (use a type-correct stub, or
+   silence an intentional error with `// @ts-expect-error` if the task is to fix
+   it).
+3. `task.ts` — default-export a `Task` (see `src/runner/tasks.ts`):
+   - `file` is the file containing the anchor (drives the hint + injection site).
+   - `instruction` is plain text with `{action}` tokens from `keymap.json`
+     (unknown actions throw at render).
+   - `solutions` maps repo-relative paths → pure `(src) => src` transforms that
+     produce the finished code. These power the solver/CI.
+4. `check.test.ts` — a vitest grader that passes only when the edit is correct.
+   Prefer asserting behavior via imports from `src/*`; keep it independent of
+   other tasks so completing one never breaks another's check.
+5. Add any new `{action}` to `keymap.json`.
 
 ## Commands
 
-`./vimple` (show) · `edit` · `check` · `status` · `reset [n]`.
+`./vimple` (start/resume) · `check` · `status` · `reset [n]` · `doctor`.
 
-## Test
+## Test & CI
 
-- `npm test` — runner-logic tests plus the completability keystone (everything under
-  `tests/`). The keystone applies the canonical solutions from `scripts/solve.ts` and
-  runs every lesson check against them, so a lesson whose stated target can't satisfy
-  its grader fails here. Green on a clean checkout.
-- `npm run test:lessons` — runs the lesson graders (`lessons/**/check.test.ts`) directly
-  against the working tree. On an unsolved repo these are red by design and go green as a
-  learner completes each lesson; this is also what `./vimple check` runs for the current
-  lesson. (The runner's `runCheck` relies on `lessons/**/check.test.ts` staying in
-  `vitest.config.ts`'s `include` globs — do not remove it.)
+- `npm run typecheck` — the product (`src` only) compiles at the start state.
+  Task/runner test files are validated by running them, not by `tsc`.
+- `npm test` — runner unit tests (`tests/**`): markers idempotency, keymap, state.
+- `npm run solve` — applies every task's `solutions`, runs the full task suite,
+  and type-checks the solved tree. Proves end-to-end completability. **Running it
+  locally rewrites `src/`** — restore with `git checkout -- src tasks`.
+- CI runs typecheck → unit tests → solve.
+- The runner's `check` relies on `tasks/**/check.test.ts` staying in
+  `vitest.config.ts`'s `include` globs — do not remove it.

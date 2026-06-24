@@ -9,4 +9,9 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      # The base codebase compiles at its start state.
+      - run: npm run typecheck
+      # Runner unit tests (markers, keymap, state).
       - run: npm test
+      # Every task is completable and the solved build is clean.
+      - run: npm run solve

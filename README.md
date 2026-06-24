@@ -1,31 +1,78 @@
 # vimple
 
-Learn Vim by **building a real, dead-simple TypeScript todo CLI** — one
-fully-specified edit at a time, in **your own** editor and keybindings. Clone it,
-make it yours, finish the lessons, keep the CLI you built.
+Learn to use **Vim as an IDE** by doing real work in a real-feeling company
+codebase — a small TypeScript **web API** you bring to life one task at a time.
+Every task teaches one IDE-grade Vim skill (jump-to-definition, auto-import,
+LSP rename, project search, macros, multi-file edits…), and the instructions are
+waiting **right in the buffer**, as a comment block tailored to *your* keymap.
+
+One command starts you, or picks up exactly where you left off. Finish all ten
+tasks and you've got a working, type-checking, tested API you built entirely in
+Vim.
 
 ## Quickstart
 
 ```bash
 git clone <your-fork> vimple && cd vimple
 npm install
-./vimple            # show the current lesson
-./vimple edit       # open your Vim at the repo root — you navigate to the file
-./vimple check      # grade your edit; pass advances you to the next lesson
-./vimple status     # progress
-./vimple reset      # start over (reset N jumps to lesson N+1)
+./vimple            # start — or resume. first run asks how you want to edit.
 ```
+
+That's the whole loop:
+
+- `./vimple` — set up (first run), then open the project in Vim and inject the
+  current task's instructions into the file you'll edit. You navigate to it.
+- `./vimple check` — grade your edit. Green advances you and arms the next task;
+  red shows what the grader saw.
+- `./vimple status` — progress.
+- `./vimple reset [n]` — restart, or jump back to task `n`.
+- `./vimple doctor` — re-check your environment (node, tsc, editor, LSP).
+
+## How the instructions work
+
+When you start a task, vimple writes a comment block into the real source file,
+right where the work happens:
+
+```ts
+// ┄ vimple task 4 · auto-import & completion ┄
+// Import `addNote` from ../services/notes (let your LSP auto-import it, or
+// type the name and <C-x><C-o> to complete it). Then replace the stub so it
+// returns { status: 201, body: addNote(input) };
+// @vimple:anchor 04
+```
+
+You read it, do the edit, save, and run `./vimple check`. On success the block
+disappears and the next task's block appears in its file. The graders ignore
+these markers, so they never get in your way.
+
+## First-run setup: your Vim, or batteries included
+
+The first `./vimple` asks how you want to edit:
+
+1. **Your own Vim/Neovim** — you bring the LSP, fuzzy finder, etc.
+2. **Turnkey** — a bundled, dependency-free Neovim config (`config/turnkey/`)
+   that wires Neovim's built-in LSP to `typescript-language-server`, so
+   jump-to-def, auto-import, completion, rename and diagnostics work out of the
+   box. (Needs `nvim` and `typescript-language-server` on your PATH; `./vimple
+   doctor` tells you what's missing.)
+
+Override anytime with env vars:
+
+- `VIMPLE_EDITOR` — `vim`, `nvim`, or a full path (default `$EDITOR`, else `vim`).
+- `VIMPLE_CONFIG` — a config **file** (loaded with `-u`) or a config **dir**
+  (loaded via `XDG_CONFIG_HOME`). Default: your normal config.
 
 ## Make it yours
 
-This is a template — fork or "Use this template", then `git init`/point the remote
-at your own repo. Your progress lives in `.vimple-state` (gitignored), so commits
-stay clean.
+This is a template — fork or "Use this template", then point the remote at your
+own repo. Your progress lives in `.vimple-state` (gitignored).
 
-## Practice on your own setup
+If you've remapped keys, edit `keymap.json` once so the in-buffer instructions
+reference *your* keys instead of the defaults.
 
-- `VIMPLE_EDITOR` — `vim`, `nvim`, or a full path (default `$EDITOR`, else `vim`).
-- `VIMPLE_CONFIG` — a config **file** (loaded with `-u`) or a config **dir** (loaded
-  via `XDG_CONFIG_HOME`). Default: your normal config.
-- `keymap.json` — if you've remapped keys, edit this once so lesson instructions
-  reference *your* keys instead of the defaults.
+## What you build
+
+A mini notes API: `src/server.ts` wires routes → handlers → services → models,
+with real imports across files and a tiny in-repo HTTP layer (`src/lib/http.ts`)
+so every jump-to-definition lands in your own code. See `AGENTS.md` for the repo
+contract and how to add tasks.

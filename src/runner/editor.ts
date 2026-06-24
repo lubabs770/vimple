@@ -1,9 +1,20 @@
-import { basename } from "node:path";
+import { basename, join } from "node:path";
 import { statSync } from "node:fs";
+import type { EditorMode } from "./state";
 
 export type EditorSpec = { bin: string; args: string[]; env: Record<string, string> };
 
-export function resolveEditor(env: NodeJS.ProcessEnv): EditorSpec {
+export function resolveEditor(
+  env: NodeJS.ProcessEnv,
+  opts: { mode: EditorMode | null; root: string },
+): EditorSpec {
+  if (opts.mode === "turnkey") {
+    // Load the bundled IDE config. nvim reads $XDG_CONFIG_HOME/nvim/init.lua.
+    const bin = env.VIMPLE_EDITOR || "nvim";
+    return { bin, args: [], env: { XDG_CONFIG_HOME: join(opts.root, "config", "turnkey") } };
+  }
+
+  // "own" (or unset): respect the learner's editor + config.
   const bin = env.VIMPLE_EDITOR || env.EDITOR || "vim";
   const cfg = env.VIMPLE_CONFIG;
   if (!cfg) return { bin, args: [], env: {} };
